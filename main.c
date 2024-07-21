@@ -1,21 +1,24 @@
 #include "raylib.h"
-#include <stdio.h>
-// #include "raymath.h"
+// #include <stdio.h>
+//  #include "raymath.h"
 
 typedef struct cell {
   Vector2 pos;
   int value;
   bool selected;
+  Color cellColor;
 } cell;
 
-cell grid[9][9];
+cell grid[81];
 
 const int cubeSize = 50;
 const int innerCube = cubeSize - 5;
 const Vector2 squareSize = {45, 45};
 const int padding = 5;
+const Color normColor = DARKGRAY;
+const Color selColor = DARKBLUE;
 
-int selectedSquare[2] = {0, 0};
+int selectedSquare = 0;
 
 void updateDrawFrame(void);
 void initGrid(void);
@@ -67,19 +70,10 @@ void updateDrawFrame(void) {
 
   ClearBackground(LIGHTGRAY);
 
-  for (int i = 0; i < 9; i++) {
-    for (int j = 0; j < 9; j++) {
-      DrawRectangleV(grid[i][j].pos, squareSize, DARKGRAY);
-      DrawText(TextFormat("%d", grid[i][j].value), 20 + (j * cubeSize),
-               15 + (i * cubeSize), 45, BLACK);
-    }
-  }
-  if (grid[selectedSquare[0]][selectedSquare[1]].selected) {
-    DrawRectangleV(grid[selectedSquare[0]][selectedSquare[1]].pos, squareSize,
-                   BLUE);
-    DrawText(TextFormat("%d", grid[selectedSquare[0]][selectedSquare[1]].value),
-             10 + grid[selectedSquare[0]][selectedSquare[1]].pos.x,
-             5 + grid[selectedSquare[0]][selectedSquare[1]].pos.y, 45, BLACK);
+  for (int i = 0; i < 81; i++) {
+    DrawRectangleV(grid[i].pos, squareSize, grid[i].cellColor);
+    DrawText(TextFormat("%d", grid[i].value), 10 + grid[i].pos.x,
+             5 + grid[i].pos.y, 45, BLACK);
   }
 
   for (int i = 3; i < 9; i += 3) {
@@ -103,25 +97,25 @@ void initGrid() {
     int pointY = 10 + (i * (squareSize.y + padding));
     for (int j = 0; j < 9; j++) {
       int pointX = 10 + (j * (squareSize.x + padding));
-      grid[i][j].pos.x = pointX;
-      grid[i][j].pos.y = pointY;
-      grid[i][j].value = 0;
-      grid[i][j].selected = false;
+      grid[(i * 9) + j].pos.x = pointX;
+      grid[(i * 9) + j].pos.y = pointY;
+      grid[(i * 9) + j].value = 0;
+      grid[(i * 9) + j].selected = false;
+      grid[(i * 9) + j].cellColor = normColor;
     }
   }
 }
 
 void onMouseClick(Vector2 pos) {
-  for (int i = 0; i < 9; i++) {
-    for (int j = 0; j < 9; j++) {
-      if (pos.x > grid[i][j].pos.x && pos.x < grid[i][j].pos.x + squareSize.x &&
-          pos.y > grid[i][j].pos.y && pos.y < grid[i][j].pos.y + squareSize.y) {
-        grid[i][j].selected = true;
-        selectedSquare[0] = i;
-        selectedSquare[1] = j;
-      } else {
-        grid[i][j].selected = false;
-      }
+  for (int i = 0; i < 81; i++) {
+    if (pos.x > grid[i].pos.x && pos.x < grid[i].pos.x + squareSize.x &&
+        pos.y > grid[i].pos.y && pos.y < grid[i].pos.y + squareSize.y) {
+      grid[i].selected = true;
+      grid[i].cellColor = selColor;
+      selectedSquare = i;
+    } else {
+      grid[i].selected = false;
+      grid[i].cellColor = normColor;
     }
   }
 }
@@ -130,7 +124,7 @@ void onKeyPress(int key) {
   if (key > 58 || key < 47) {
     return;
   }
-  if (grid[selectedSquare[0]][selectedSquare[1]].selected) {
-    grid[selectedSquare[0]][selectedSquare[1]].value = key - 48;
+  if (grid[selectedSquare].selected) {
+    grid[selectedSquare].value = key - 48;
   }
 }
