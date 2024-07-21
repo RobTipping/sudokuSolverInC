@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "solver.h"
 // #include <stdio.h>
 //  #include "raymath.h"
 
@@ -48,6 +49,9 @@ int main(void) {
     //----------------------------------------------------------------------------------
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
       onMouseClick(GetMousePosition());
+    }
+    if (IsKeyPressed(KEY_ENTER)) {
+      // add code to see if solution works
     }
     if ((key = GetKeyPressed()) != 0) {
       onKeyPress(key);
