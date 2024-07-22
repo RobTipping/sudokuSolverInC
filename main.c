@@ -3,6 +3,8 @@
 // #include <stdio.h>
 //  #include "raymath.h"
 
+extern int solvedGrid[9][9];
+
 typedef struct cell {
   Vector2 pos;
   int value;
@@ -25,6 +27,7 @@ void updateDrawFrame(void);
 void initGrid(void);
 void onMouseClick(Vector2 pos);
 void onKeyPress(int key);
+void finishGrid(void);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -52,6 +55,7 @@ int main(void) {
     }
     if (IsKeyPressed(KEY_ENTER)) {
       // add code to see if solution works
+      finishGrid();
     }
     if ((key = GetKeyPressed()) != 0) {
       onKeyPress(key);
@@ -89,9 +93,9 @@ void updateDrawFrame(void) {
     }
   }
 
-  DrawText(TextFormat("FPS: %d", GetFPS()), 40, 160, 10, RED);
-  DrawText(TextFormat("Mouse at %d,%d", GetMouseX(), GetMouseY()), 40, 180, 10,
-           RED);
+  // DrawText(TextFormat("FPS: %d", GetFPS()), 40, 160, 10, RED);
+  // DrawText(TextFormat("Mouse at %d,%d", GetMouseX(), GetMouseY()), 40, 180,
+  // 10, RED);
 
   EndDrawing();
 }
@@ -130,5 +134,22 @@ void onKeyPress(int key) {
   }
   if (grid[selectedSquare].selected) {
     grid[selectedSquare].value = key - 48;
+  }
+}
+
+void finishGrid(void) {
+  int tempGrid[9][9];
+  for (int i = 0; i < 9; i++) {
+    for (int j = 0; j < 9; j++) {
+      tempGrid[i][j] = grid[(i * 9) + j].value;
+    }
+  }
+  if (solveGrid(tempGrid) == 0) {
+    return;
+  }
+  for (int i = 0; i < 9; i++) {
+    for (int j = 0; j < 9; j++) {
+      grid[(i * 9) + j].value = solvedGrid[i][j];
+    }
   }
 }
