@@ -11,30 +11,40 @@ typedef struct cell {
   bool validValue;
   bool selected;
   Color cellColor;
+  Texture2D texture;
 } cell;
+
+typedef struct button {
+  Vector2 startPos;
+  Vector2 endPos;
+  Texture2D texture;
+} button;
 
 cell grid[81];
 int copyGrid[9][9];
+button solveButt;
+button clearButt;
+button inputCell[9];
 
 const int cubeSize = 50;
 const int innerCube = cubeSize - 5;
 const Vector2 squareSize = {45, 45};
 const int padding = 5;
-const Color normColorValid = DARKGRAY;
+const Color normColorValid = WHITE;
 const Color selColorValid = DARKBLUE;
 const Color normColorInvalid = RED;
 const Color selColorInvalid = DARKPURPLE;
 
 int selectedSquare = 0;
 
-Texture2D solveButtTexture;
-Texture2D clearButtTexture;
-
 void updateDrawFrame(void);
 void initGrid(void);
 void onMouseClick(Vector2 pos);
 void onKeyPress(int key);
 void finishGrid(void);
+void initButtons(void);
+void cellInput(int value);
+void clearGrid(void);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -46,16 +56,10 @@ int main(void) {
   const int screenHeight = 600;
   int key = 0;
 
-  initGrid();
-
   InitWindow(screenWidth, screenHeight, "SuDoKu Solver!");
 
-  Image solveButton = LoadImage("images/testSolveButt.png");
-  solveButtTexture = LoadTextureFromImage(solveButton);
-  UnloadImage(solveButton);
-  Image clearButton = LoadImage("images/testClearButt.png");
-  clearButtTexture = LoadTextureFromImage(clearButton);
-  UnloadImage(clearButton);
+  initGrid();
+  initButtons();
 
   SetTargetFPS(60);
   updateDrawFrame();
@@ -107,7 +111,8 @@ void updateDrawFrame(void) {
       }
     }
 
-    DrawRectangleV(grid[i].pos, squareSize, grid[i].cellColor);
+    // DrawRectangleV(grid[i].pos, squareSize, grid[i].cellColor);
+    DrawTextureV(grid[i].texture, grid[i].pos, grid[i].cellColor);
     DrawText(TextFormat("%d", grid[i].value), 10 + grid[i].pos.x,
              5 + grid[i].pos.y, 45, BLACK);
   }
@@ -121,8 +126,16 @@ void updateDrawFrame(void) {
     }
   }
 
-  DrawTexture(solveButtTexture, 500, 10, WHITE);
-  DrawTexture(clearButtTexture, 500, 50, WHITE);
+  DrawTexture(solveButt.texture, solveButt.startPos.x, solveButt.startPos.y,
+              WHITE);
+  DrawTexture(clearButt.texture, clearButt.startPos.x, clearButt.startPos.y,
+              WHITE);
+
+  for (int i = 0; i < 9; i++) {
+    DrawTextureV(inputCell[i].texture, inputCell[i].startPos, WHITE);
+    DrawText(TextFormat("%d", i + 1), inputCell[i].startPos.x + 10,
+             inputCell[i].startPos.y + 5, 45, BLACK);
+  }
 
   // DrawText(TextFormat("FPS: %d", GetFPS()), 40, 160, 10, RED);
   // DrawText(TextFormat("Mouse at %d,%d", GetMouseX(), GetMouseY()), 40, 180,
@@ -132,6 +145,26 @@ void updateDrawFrame(void) {
 }
 
 void initGrid() {
+  Image cellImage = LoadImage("images/testNormCellValid.png");
+  Texture2D tempTexture = LoadTextureFromImage(cellImage);
+  UnloadImage(cellImage);
+  for (int i = 0; i < 9; i++) {
+    int pointY = 10 + (i * (squareSize.y + padding));
+    for (int j = 0; j < 9; j++) {
+      int pointX = 10 + (j * (squareSize.x + padding));
+      grid[(i * 9) + j].pos.x = pointX;
+      grid[(i * 9) + j].pos.y = pointY;
+      grid[(i * 9) + j].value = 0;
+      grid[(i * 9) + j].selected = false;
+      grid[(i * 9) + j].cellColor = normColorValid;
+      grid[(i * 9) + j].validValue = true;
+      grid[(i * 9) + j].texture = tempTexture;
+      copyGrid[i][j] = 0;
+    }
+  }
+}
+
+void clearGrid(void) {
   for (int i = 0; i < 9; i++) {
     int pointY = 10 + (i * (squareSize.y + padding));
     for (int j = 0; j < 9; j++) {
@@ -148,6 +181,15 @@ void initGrid() {
 }
 
 void onMouseClick(Vector2 pos) {
+  for (int i = 0; i < 9; i++) {
+    if (pos.x > inputCell[i].startPos.x && pos.x < inputCell[i].endPos.x &&
+        pos.y > inputCell[i].startPos.y && pos.y < inputCell[i].endPos.y) {
+      if (grid[selectedSquare].selected == true) {
+        cellInput(i + 1);
+        return;
+      }
+    }
+  }
   for (int i = 0; i < 81; i++) {
     if (pos.x > grid[i].pos.x && pos.x < grid[i].pos.x + squareSize.x &&
         pos.y > grid[i].pos.y && pos.y < grid[i].pos.y + squareSize.y) {
@@ -157,11 +199,13 @@ void onMouseClick(Vector2 pos) {
       grid[i].selected = false;
     }
   }
-  if (pos.x > 500 && pos.x < 600 && pos.y > 10 && pos.y < 35) {
+  if (pos.x > solveButt.startPos.x && pos.x < solveButt.endPos.x &&
+      pos.y > solveButt.startPos.y && pos.y < solveButt.endPos.y) {
     finishGrid();
   }
-  if (pos.x > 500 && pos.x < 600 && pos.y > 50 && pos.y < 75) {
-    initGrid();
+  if (pos.x > clearButt.startPos.x && pos.x < clearButt.endPos.x &&
+      pos.y > clearButt.startPos.y && pos.y < clearButt.endPos.y) {
+    clearGrid();
   }
 }
 
@@ -170,23 +214,7 @@ void onKeyPress(int key) {
     return;
   }
   if (grid[selectedSquare].selected) {
-    grid[selectedSquare].value = key - 48;
-    int x = (selectedSquare / 9);
-    int y = (selectedSquare % 9);
-    copyGrid[x][y] = grid[selectedSquare].value;
-    for (int i = 0; i < 9; i++) {
-      for (int j = 0; j < 9; j++) {
-        if (copyGrid[i][j] == 0) {
-          grid[(i * 9) + j].validValue = true;
-          continue;
-        }
-        if (checkSquare(copyGrid, i, j) == 0) {
-          grid[(i * 9) + j].validValue = false;
-        } else {
-          grid[(i * 9) + j].validValue = true;
-        }
-      }
-    }
+    cellInput(key - 48);
   }
 }
 
@@ -197,6 +225,53 @@ void finishGrid(void) {
   for (int i = 0; i < 9; i++) {
     for (int j = 0; j < 9; j++) {
       grid[(i * 9) + j].value = solvedGrid[i][j];
+    }
+  }
+}
+
+void initButtons(void) {
+  Image solveButton = LoadImage("images/testSolveButt.png");
+  solveButt.texture = LoadTextureFromImage(solveButton);
+  UnloadImage(solveButton);
+  Image clearButton = LoadImage("images/testClearButt.png");
+  clearButt.texture = LoadTextureFromImage(clearButton);
+  UnloadImage(clearButton);
+  Image inputCellImage = LoadImage("images/testInputCell.png");
+  Texture2D tempTextrue = LoadTextureFromImage(inputCellImage);
+  UnloadImage(inputCellImage);
+  solveButt.startPos.x = 475;
+  solveButt.startPos.y = 10;
+  solveButt.endPos.x = solveButt.startPos.x + 100;
+  solveButt.endPos.y = solveButt.startPos.y + 25;
+  clearButt.startPos.x = 475;
+  clearButt.startPos.y = 50;
+  clearButt.endPos.x = clearButt.startPos.x + 100;
+  clearButt.endPos.y = clearButt.startPos.y + 25;
+  for (int i = 0; i < 9; i++) {
+    inputCell[i].texture = tempTextrue;
+    inputCell[i].startPos.x = 10 + (i * (squareSize.x + padding));
+    inputCell[i].startPos.y = 475;
+    inputCell[i].endPos.x = inputCell[i].startPos.x + squareSize.x;
+    inputCell[i].endPos.y = inputCell[i].startPos.y + squareSize.y;
+  }
+}
+
+void cellInput(int value) {
+  grid[selectedSquare].value = value;
+  int x = (selectedSquare / 9);
+  int y = (selectedSquare % 9);
+  copyGrid[x][y] = grid[selectedSquare].value;
+  for (int i = 0; i < 9; i++) {
+    for (int j = 0; j < 9; j++) {
+      if (copyGrid[i][j] == 0) {
+        grid[(i * 9) + j].validValue = true;
+        continue;
+      }
+      if (checkSquare(copyGrid, i, j) == 0) {
+        grid[(i * 9) + j].validValue = false;
+      } else {
+        grid[(i * 9) + j].validValue = true;
+      }
     }
   }
 }
