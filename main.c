@@ -8,20 +8,27 @@ extern int solvedGrid[9][9];
 typedef struct cell {
   Vector2 pos;
   int value;
+  bool validValue;
   bool selected;
   Color cellColor;
 } cell;
 
 cell grid[81];
+int copyGrid[9][9];
 
 const int cubeSize = 50;
 const int innerCube = cubeSize - 5;
 const Vector2 squareSize = {45, 45};
 const int padding = 5;
-const Color normColor = DARKGRAY;
-const Color selColor = DARKBLUE;
+const Color normColorValid = DARKGRAY;
+const Color selColorValid = DARKBLUE;
+const Color normColorInvalid = RED;
+const Color selColorInvalid = DARKPURPLE;
 
 int selectedSquare = 0;
+
+Texture2D solveButtTexture;
+Texture2D clearButtTexture;
 
 void updateDrawFrame(void);
 void initGrid(void);
@@ -42,6 +49,13 @@ int main(void) {
   initGrid();
 
   InitWindow(screenWidth, screenHeight, "SuDoKu Solver!");
+
+  Image solveButton = LoadImage("images/testSolveButt.png");
+  solveButtTexture = LoadTextureFromImage(solveButton);
+  UnloadImage(solveButton);
+  Image clearButton = LoadImage("images/testClearButt.png");
+  clearButtTexture = LoadTextureFromImage(clearButton);
+  UnloadImage(clearButton);
 
   SetTargetFPS(60);
   updateDrawFrame();
@@ -79,6 +93,20 @@ void updateDrawFrame(void) {
   ClearBackground(LIGHTGRAY);
 
   for (int i = 0; i < 81; i++) {
+    if (grid[i].selected == false) {
+      if (grid[i].validValue == true) {
+        grid[i].cellColor = normColorValid;
+      } else {
+        grid[i].cellColor = normColorInvalid;
+      }
+    } else {
+      if (grid[i].validValue == true) {
+        grid[i].cellColor = selColorValid;
+      } else {
+        grid[i].cellColor = selColorInvalid;
+      }
+    }
+
     DrawRectangleV(grid[i].pos, squareSize, grid[i].cellColor);
     DrawText(TextFormat("%d", grid[i].value), 10 + grid[i].pos.x,
              5 + grid[i].pos.y, 45, BLACK);
@@ -92,6 +120,9 @@ void updateDrawFrame(void) {
                5 + j + (i * cubeSize), YELLOW);
     }
   }
+
+  DrawTexture(solveButtTexture, 500, 10, WHITE);
+  DrawTexture(clearButtTexture, 500, 50, WHITE);
 
   // DrawText(TextFormat("FPS: %d", GetFPS()), 40, 160, 10, RED);
   // DrawText(TextFormat("Mouse at %d,%d", GetMouseX(), GetMouseY()), 40, 180,
@@ -109,7 +140,9 @@ void initGrid() {
       grid[(i * 9) + j].pos.y = pointY;
       grid[(i * 9) + j].value = 0;
       grid[(i * 9) + j].selected = false;
-      grid[(i * 9) + j].cellColor = normColor;
+      grid[(i * 9) + j].cellColor = normColorValid;
+      grid[(i * 9) + j].validValue = true;
+      copyGrid[i][j] = 0;
     }
   }
 }
@@ -119,12 +152,16 @@ void onMouseClick(Vector2 pos) {
     if (pos.x > grid[i].pos.x && pos.x < grid[i].pos.x + squareSize.x &&
         pos.y > grid[i].pos.y && pos.y < grid[i].pos.y + squareSize.y) {
       grid[i].selected = true;
-      grid[i].cellColor = selColor;
       selectedSquare = i;
     } else {
       grid[i].selected = false;
-      grid[i].cellColor = normColor;
     }
+  }
+  if (pos.x > 500 && pos.x < 600 && pos.y > 10 && pos.y < 35) {
+    finishGrid();
+  }
+  if (pos.x > 500 && pos.x < 600 && pos.y > 50 && pos.y < 75) {
+    initGrid();
   }
 }
 
@@ -134,17 +171,27 @@ void onKeyPress(int key) {
   }
   if (grid[selectedSquare].selected) {
     grid[selectedSquare].value = key - 48;
+    int x = (selectedSquare / 9);
+    int y = (selectedSquare % 9);
+    copyGrid[x][y] = grid[selectedSquare].value;
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        if (copyGrid[i][j] == 0) {
+          grid[(i * 9) + j].validValue = true;
+          continue;
+        }
+        if (checkSquare(copyGrid, i, j) == 0) {
+          grid[(i * 9) + j].validValue = false;
+        } else {
+          grid[(i * 9) + j].validValue = true;
+        }
+      }
+    }
   }
 }
 
 void finishGrid(void) {
-  int tempGrid[9][9];
-  for (int i = 0; i < 9; i++) {
-    for (int j = 0; j < 9; j++) {
-      tempGrid[i][j] = grid[(i * 9) + j].value;
-    }
-  }
-  if (solveGrid(tempGrid) == 0) {
+  if (solveGrid(copyGrid) == 0) {
     return;
   }
   for (int i = 0; i < 9; i++) {
