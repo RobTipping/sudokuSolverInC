@@ -28,7 +28,7 @@ int checkSquare(int grid[9][9], int i, int j) {
     // Check Column
     if (i != k && grid[i][j] == grid[k][j]) {
       return 0;
-    } // Check 3x3 grid
+    }  // Check 3x3 grid
     int x = a + k / 3;
     int y = b + k % 3;
     if (i == x && j == y) {
@@ -48,7 +48,7 @@ int solveGrid(int grid[9][9]) {
     return 0;
   }
   if (findGridSolution(grid, 0) == 1) {
-    return 1; // need to pass solvedGrid }
+    return 1;  // need to pass solvedGrid }
   }
   return 0;
 }

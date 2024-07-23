@@ -82,7 +82,7 @@ int main(void) {
 
   // De-Initialization
   //--------------------------------------------------------------------------------------
-  CloseWindow(); // Close window and OpenGL context
+  CloseWindow();  // Close window and OpenGL context
   //--------------------------------------------------------------------------------------
 
   return 0;
@@ -112,28 +112,22 @@ void updateDrawFrame(void) {
 
     // DrawRectangleV(grid[i].pos, squareSize, grid[i].cellColor);
     DrawTextureV(grid[i].texture, grid[i].pos, grid[i].cellColor);
-    DrawText(TextFormat("%d", grid[i].value), 10 + grid[i].pos.x,
-             5 + grid[i].pos.y, 45, BLACK);
+    DrawText(TextFormat("%d", grid[i].value), 10 + grid[i].pos.x, 5 + grid[i].pos.y, 45, BLACK);
   }
 
   for (int i = 3; i < 9; i += 3) {
     for (int j = 0; j < 6; j++) {
-      DrawLine(5 + j + (i * cubeSize), 10, 5 + j + (i * cubeSize),
-               5 + (9 * cubeSize), YELLOW);
-      DrawLine(10, 5 + j + (i * cubeSize), 5 + (9 * cubeSize),
-               5 + j + (i * cubeSize), YELLOW);
+      DrawLine(5 + j + (i * cubeSize), 10, 5 + j + (i * cubeSize), 5 + (9 * cubeSize), YELLOW);
+      DrawLine(10, 5 + j + (i * cubeSize), 5 + (9 * cubeSize), 5 + j + (i * cubeSize), YELLOW);
     }
   }
 
-  DrawTexture(solveButt.texture, solveButt.startPos.x, solveButt.startPos.y,
-              WHITE);
-  DrawTexture(clearButt.texture, clearButt.startPos.x, clearButt.startPos.y,
-              WHITE);
+  DrawTexture(solveButt.texture, solveButt.startPos.x, solveButt.startPos.y, WHITE);
+  DrawTexture(clearButt.texture, clearButt.startPos.x, clearButt.startPos.y, WHITE);
 
   for (int i = 0; i < 9; i++) {
     DrawTextureV(inputCell[i].texture, inputCell[i].startPos, WHITE);
-    DrawText(TextFormat("%d", i + 1), inputCell[i].startPos.x + 10,
-             inputCell[i].startPos.y + 5, 45, BLACK);
+    DrawText(TextFormat("%d", i + 1), inputCell[i].startPos.x + 10, inputCell[i].startPos.y + 5, 45, BLACK);
   }
 
   // DrawText(TextFormat("FPS: %d", GetFPS()), 40, 160, 10, RED);
@@ -181,8 +175,7 @@ void clearGrid(void) {
 
 void onMouseClick(Vector2 pos) {
   for (int i = 0; i < 9; i++) {
-    if (pos.x > inputCell[i].startPos.x && pos.x < inputCell[i].endPos.x &&
-        pos.y > inputCell[i].startPos.y && pos.y < inputCell[i].endPos.y) {
+    if (pos.x > inputCell[i].startPos.x && pos.x < inputCell[i].endPos.x && pos.y > inputCell[i].startPos.y && pos.y < inputCell[i].endPos.y) {
       if (grid[selectedSquare].selected == true) {
         cellInput(i + 1);
         return;
@@ -190,20 +183,17 @@ void onMouseClick(Vector2 pos) {
     }
   }
   for (int i = 0; i < 81; i++) {
-    if (pos.x > grid[i].pos.x && pos.x < grid[i].pos.x + squareSize.x &&
-        pos.y > grid[i].pos.y && pos.y < grid[i].pos.y + squareSize.y) {
+    if (pos.x > grid[i].pos.x && pos.x < grid[i].pos.x + squareSize.x && pos.y > grid[i].pos.y && pos.y < grid[i].pos.y + squareSize.y) {
       grid[i].selected = true;
       selectedSquare = i;
     } else {
       grid[i].selected = false;
     }
   }
-  if (pos.x > solveButt.startPos.x && pos.x < solveButt.endPos.x &&
-      pos.y > solveButt.startPos.y && pos.y < solveButt.endPos.y) {
+  if (pos.x > solveButt.startPos.x && pos.x < solveButt.endPos.x && pos.y > solveButt.startPos.y && pos.y < solveButt.endPos.y) {
     finishGrid();
   }
-  if (pos.x > clearButt.startPos.x && pos.x < clearButt.endPos.x &&
-      pos.y > clearButt.startPos.y && pos.y < clearButt.endPos.y) {
+  if (pos.x > clearButt.startPos.x && pos.x < clearButt.endPos.x && pos.y > clearButt.startPos.y && pos.y < clearButt.endPos.y) {
     clearGrid();
   }
 }
