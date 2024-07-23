@@ -1,0 +1,30 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-DUSE_WAYLAND=ON",
+      "-I./include",
+      "-o",
+      "./build/SoDuKuSolver",
+      "src/main.c"
+    ],
+    "directory": "/home/rzt/Code/C/sudokuSolver",
+    "file": "/home/rzt/Code/C/sudokuSolver/src/main.c",
+    "output": "/home/rzt/Code/C/sudokuSolver/build/SoDuKuSolver"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-DUSE_WAYLAND=ON",
+      "-I./include",
+      "-o",
+      "./build/SoDuKuSolver",
+      "src/solver.c"
+    ],
+    "directory": "/home/rzt/Code/C/sudokuSolver",
+    "file": "/home/rzt/Code/C/sudokuSolver/src/solver.c",
+    "output": "/home/rzt/Code/C/sudokuSolver/build/SoDuKuSolver"
+  }
+]

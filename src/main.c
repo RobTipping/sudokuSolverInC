@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include "solver.h"
-// #include <stdio.h>
 //  #include "raymath.h"
 
 extern int solvedGrid[9][9];
