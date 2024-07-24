@@ -5,7 +5,6 @@
 #include "userInput.h"
 
 cell grid[81];
-int copyGrid[9][9];
 button solveButt;
 button clearButt;
 button clearAllButt;
@@ -23,7 +22,7 @@ int main(void) {
 
   InitWindow(screenWidth, screenHeight, "SuDoKu Solver!");
 
-  initGrid(grid, copyGrid);
+  initGrid(grid);
   initButtons(&solveButt, &clearButt, &clearAllButt, inputCell);
 
   SetTargetFPS(60);
@@ -37,14 +36,14 @@ int main(void) {
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-      onMouseClick(GetMousePosition(), grid, solveButt, clearButt, clearAllButt, inputCell, copyGrid);
+      onMouseClick(GetMousePosition(), grid, solveButt, clearButt, clearAllButt, inputCell);
     }
     if (IsKeyPressed(KEY_ENTER)) {
       // add code to see if solution works
-      finishGrid(grid, copyGrid);
+      finishGrid(grid);
     }
     if ((key = GetKeyPressed()) != 0) {
-      onKeyPress(key, grid, copyGrid);
+      onKeyPress(key, grid);
     }
     updateDrawFrame(grid, solveButt, clearButt, clearAllButt, inputCell);
   }

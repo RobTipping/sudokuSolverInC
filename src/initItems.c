@@ -6,7 +6,7 @@
 const Vector2 squareSize = {45, 45};
 const int padding = 5;
 
-void initGrid(cell grid[81], int copyGrid[9][9]) {
+void initGrid(cell grid[81]) {
   for (int i = 0; i < 9; i++) {
     int pointY = 10 + (i * (squareSize.y + padding));
     for (int j = 0; j < 9; j++) {
@@ -19,7 +19,6 @@ void initGrid(cell grid[81], int copyGrid[9][9]) {
       grid[(i * 9) + j].selected = false;
       grid[(i * 9) + j].cellColor = WHITE;
       grid[(i * 9) + j].validValue = true;
-      copyGrid[i][j] = 0;
     }
   }
 }

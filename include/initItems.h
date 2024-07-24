@@ -3,7 +3,7 @@
 
 #include "customStruct.h"
 
-void initGrid(cell grid[81], int copyGrid[9][9]);
+void initGrid(cell grid[81]);
 void initButtons(button* solveButt, button* clearButt, button* clearAllButt, button inputCell[9]);
 
 #endif
