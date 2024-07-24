@@ -23,10 +23,10 @@ cell grid[81];
 int copyGrid[9][9];
 button solveButt;
 button clearButt;
+button clearAllButt;
 button inputCell[9];
+Texture2D backgroundTexture;
 
-const int cubeSize = 50;
-const int innerCube = cubeSize - 5;
 const Vector2 squareSize = {45, 45};
 const int padding = 5;
 const Color normColorValid = WHITE;
@@ -61,6 +61,11 @@ int main(void) {
   initButtons();
 
   SetTargetFPS(60);
+
+  Image backgroundImage = LoadImage("images/testBackGround.png");
+  backgroundTexture = LoadTextureFromImage(backgroundImage);
+  UnloadImage(backgroundImage);
+
   updateDrawFrame();
   // Main game loop
   while (!WindowShouldClose()) {
@@ -89,11 +94,12 @@ int main(void) {
 }
 
 void updateDrawFrame(void) {
-  int mouseX = GetMouseX();
-  int mouseY = GetMouseY();
+  // int mouseX = GetMouseX();
+  // int mouseY = GetMouseY();
   BeginDrawing();
 
-  ClearBackground(LIGHTGRAY);
+  // ClearBackground(LIGHTGRAY);
+  DrawTextureV(backgroundTexture, (Vector2){0, 0}, WHITE);
 
   for (int i = 0; i < 81; i++) {
     if (grid[i].selected == false) {
@@ -115,15 +121,9 @@ void updateDrawFrame(void) {
     DrawText(TextFormat("%d", grid[i].value), 10 + grid[i].pos.x, 5 + grid[i].pos.y, 45, BLACK);
   }
 
-  for (int i = 3; i < 9; i += 3) {
-    for (int j = 0; j < 6; j++) {
-      DrawLine(5 + j + (i * cubeSize), 10, 5 + j + (i * cubeSize), 5 + (9 * cubeSize), YELLOW);
-      DrawLine(10, 5 + j + (i * cubeSize), 5 + (9 * cubeSize), 5 + j + (i * cubeSize), YELLOW);
-    }
-  }
-
   DrawTexture(solveButt.texture, solveButt.startPos.x, solveButt.startPos.y, WHITE);
   DrawTexture(clearButt.texture, clearButt.startPos.x, clearButt.startPos.y, WHITE);
+  DrawTexture(clearAllButt.texture, clearAllButt.startPos.x, clearAllButt.startPos.y, WHITE);
 
   for (int i = 0; i < 9; i++) {
     DrawTextureV(inputCell[i].texture, inputCell[i].startPos, WHITE);
@@ -182,6 +182,12 @@ void onMouseClick(Vector2 pos) {
       }
     }
   }
+  if (pos.x > clearButt.startPos.x && pos.x < clearButt.endPos.x && pos.y > clearButt.startPos.y && pos.y < clearButt.endPos.y) {
+    if (grid[selectedSquare].selected == true) {
+      cellInput(0);
+      return;
+    }
+  }
   for (int i = 0; i < 81; i++) {
     if (pos.x > grid[i].pos.x && pos.x < grid[i].pos.x + squareSize.x && pos.y > grid[i].pos.y && pos.y < grid[i].pos.y + squareSize.y) {
       grid[i].selected = true;
@@ -193,8 +199,8 @@ void onMouseClick(Vector2 pos) {
   if (pos.x > solveButt.startPos.x && pos.x < solveButt.endPos.x && pos.y > solveButt.startPos.y && pos.y < solveButt.endPos.y) {
     finishGrid();
   }
-  if (pos.x > clearButt.startPos.x && pos.x < clearButt.endPos.x && pos.y > clearButt.startPos.y && pos.y < clearButt.endPos.y) {
-    clearGrid();
+  if (pos.x > clearAllButt.startPos.x && pos.x < clearAllButt.endPos.x && pos.y > clearAllButt.startPos.y && pos.y < clearAllButt.endPos.y) {
+    clearGrid();  // change this to just clear square
   }
 }
 
@@ -225,6 +231,9 @@ void initButtons(void) {
   Image clearButton = LoadImage("images/testClearButt.png");
   clearButt.texture = LoadTextureFromImage(clearButton);
   UnloadImage(clearButton);
+  Image clearAllButton = LoadImage("images/testClearAllButt.png");
+  clearAllButt.texture = LoadTextureFromImage(clearAllButton);
+  UnloadImage(clearAllButton);
   Image inputCellImage = LoadImage("images/testInputCell.png");
   Texture2D tempTextrue = LoadTextureFromImage(inputCellImage);
   UnloadImage(inputCellImage);
@@ -236,6 +245,10 @@ void initButtons(void) {
   clearButt.startPos.y = 50;
   clearButt.endPos.x = clearButt.startPos.x + 100;
   clearButt.endPos.y = clearButt.startPos.y + 25;
+  clearAllButt.startPos.x = 475;
+  clearAllButt.startPos.y = 90;
+  clearAllButt.endPos.x = clearAllButt.startPos.x + 100;
+  clearAllButt.endPos.y = clearAllButt.startPos.y + 25;
   for (int i = 0; i < 9; i++) {
     inputCell[i].texture = tempTextrue;
     inputCell[i].startPos.x = 10 + (i * (squareSize.x + padding));
