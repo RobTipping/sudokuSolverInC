@@ -2,29 +2,81 @@
   {
     "arguments": [
       "/usr/bin/gcc",
-      "-c",
-      "-DUSE_WAYLAND=ON",
+      "-I./src",
       "-I./include",
-      "-o",
-      "./build/SoDuKuSolver",
-      "src/main.c"
-    ],
-    "directory": "/home/rzt/Code/C/sudokuSolver",
-    "file": "/home/rzt/Code/C/sudokuSolver/src/main.c",
-    "output": "/home/rzt/Code/C/sudokuSolver/build/SoDuKuSolver"
-  },
-  {
-    "arguments": [
-      "/usr/bin/gcc",
-      "-c",
       "-DUSE_WAYLAND=ON",
-      "-I./include",
+      "--debug",
+      "-c",
       "-o",
-      "./build/SoDuKuSolver",
+      "build/./src/solver.c.o",
       "src/solver.c"
     ],
     "directory": "/home/rzt/Code/C/sudokuSolver",
     "file": "/home/rzt/Code/C/sudokuSolver/src/solver.c",
-    "output": "/home/rzt/Code/C/sudokuSolver/build/SoDuKuSolver"
+    "output": "/home/rzt/Code/C/sudokuSolver/build/src/solver.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-I./src",
+      "-I./include",
+      "-DUSE_WAYLAND=ON",
+      "--debug",
+      "-c",
+      "-o",
+      "build/./src/initItems.c.o",
+      "src/initItems.c"
+    ],
+    "directory": "/home/rzt/Code/C/sudokuSolver",
+    "file": "/home/rzt/Code/C/sudokuSolver/src/initItems.c",
+    "output": "/home/rzt/Code/C/sudokuSolver/build/src/initItems.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-I./src",
+      "-I./include",
+      "-DUSE_WAYLAND=ON",
+      "--debug",
+      "-c",
+      "-o",
+      "build/./src/userInput.c.o",
+      "src/userInput.c"
+    ],
+    "directory": "/home/rzt/Code/C/sudokuSolver",
+    "file": "/home/rzt/Code/C/sudokuSolver/src/userInput.c",
+    "output": "/home/rzt/Code/C/sudokuSolver/build/src/userInput.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-I./src",
+      "-I./include",
+      "-DUSE_WAYLAND=ON",
+      "--debug",
+      "-c",
+      "-o",
+      "build/./src/main.c.o",
+      "src/main.c"
+    ],
+    "directory": "/home/rzt/Code/C/sudokuSolver",
+    "file": "/home/rzt/Code/C/sudokuSolver/src/main.c",
+    "output": "/home/rzt/Code/C/sudokuSolver/build/src/main.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-I./src",
+      "-I./include",
+      "-DUSE_WAYLAND=ON",
+      "--debug",
+      "-c",
+      "-o",
+      "build/./src/drawFrame.c.o",
+      "src/drawFrame.c"
+    ],
+    "directory": "/home/rzt/Code/C/sudokuSolver",
+    "file": "/home/rzt/Code/C/sudokuSolver/src/drawFrame.c",
+    "output": "/home/rzt/Code/C/sudokuSolver/build/src/drawFrame.c.o"
   }
 ]
