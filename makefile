@@ -1,5 +1,5 @@
 CC = gcc
-RAYLIBFLAGS = -lraylib -lGL -lm -lpthread -lrt -DUSE_WAYLAND=ON
+RAYLIBFLAGS = -lraylib -lGL -lm -lpthread -lrt -DUSE_WAYLAND=ON --debug
 
 
 # Thanks to Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/)
